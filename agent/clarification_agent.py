@@ -13,7 +13,7 @@ This module is designed to work with Streamlit's session state
 for managing conversation flow across rerenders.
 """
 
-from tools.memory import add_mapping, load_mappings, CATEGORIES_LIST
+from tools.memory import add_mapping, load_mappings
 from tools.categorizer import CATEGORIES
 
 # ── Session state keys ────────────────────────────────────────────────────────
