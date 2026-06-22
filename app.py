@@ -99,10 +99,10 @@ with st.sidebar:
     # Stage indicator
     stages = ["upload", "categorizing", "clarifying", "dashboard"]
     stage_labels = {
-        "upload":       "📁 1. Upload Statements",
-        "categorizing": "🤖 2. AI Categorization",
-        "clarifying":   "💬 3. Clarify Unknowns",
-        "dashboard":    "📊 4. Dashboard",
+        "upload":       "1. Upload Statements 📁",
+        "categorizing": "2. AI Categorization 🤖",
+        "clarifying":   "3. Clarify Unknowns💬",
+        "dashboard":    "4. Dashboard 📊",
     }
     for s, label in stage_labels.items():
         if st.session_state.stage == s:
