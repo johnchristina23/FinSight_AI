@@ -38,7 +38,7 @@ CATEGORIES = [
     "savings", "investment", "travel", "education", "other"
 ]
 
-def categorize_transactions(descriptions: list[str]) -> list[dict]:
+def categorize_transactions(descriptions: list[str], *args, **kwargs) -> list[dict]:
     """
     Categorizes transaction descriptions using OpenRouter's free open-source models.
     """
