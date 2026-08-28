@@ -61,7 +61,6 @@ def categorize_transactions(descriptions: list[str]) -> list[dict]:
 
     try:
         response = client.chat.completions.create(
-            # Dynamic router that routes to free models supporting structured JSON output
             model="openrouter/free",
             messages=[
                 {"role": "system", "content": "You are a financial parsing assistant that outputs strict JSON arrays only."},
@@ -80,24 +79,28 @@ def categorize_transactions(descriptions: list[str]) -> list[dict]:
 
     except Exception as e:
         print(f"Error during OpenRouter transaction categorization: {e}")
-        # Fallback to 'other' if the API call fails
         return [{"description": desc, "category": "other"} for desc in descriptions]
 
 
 def get_uncategorized_recurring(df: pd.DataFrame, min_occurrences: int = 2) -> list[str]:
     """
     Identifies recurring transaction descriptions that are categorized as 'other'.
-    Required by app.py to pass into clarification_agent.
     """
     if df.empty or 'category' not in df.columns or 'description' not in df.columns:
         return []
 
-    # Filter transactions assigned to 'other'
     uncategorized = df[df['category'] == 'other']
-    
-    # Calculate occurrence frequency
     counts = uncategorized['description'].value_counts()
-    
-    # Return descriptions meeting the recurrence threshold
-    recurring = counts[counts >= min_occurrences].index.tolist()
-    return recurring
+    return counts[counts >= min_occurrences].index.tolist()
+
+
+def get_uncategorized_oneoffs(df: pd.DataFrame, max_occurrences: int = 1) -> list[str]:
+    """
+    Identifies one-off transaction descriptions that are categorized as 'other'.
+    """
+    if df.empty or 'category' not in df.columns or 'description' not in df.columns:
+        return []
+
+    uncategorized = df[df['category'] == 'other']
+    counts = uncategorized['description'].value_counts()
+    return counts[counts <= max_occurrences].index.tolist()
