@@ -109,9 +109,10 @@ def categorize_transactions(data, *args, **kwargs):
 
 # --- Helper functions required by app.py ---
 
-def get_uncategorized_recurring(df: pd.DataFrame, min_occurrences: int = 2) -> list[str]:
+def get_uncategorized_recurring(df: pd.DataFrame, min_occurrences: int = 2, **kwargs) -> list[str]:
     """
     Identifies recurring transaction descriptions that are categorized as 'other'.
+    Uses **kwargs to absorb unexpected legacy arguments from app.py.
     """
     if df.empty or 'category' not in df.columns or 'description' not in df.columns:
         return []
@@ -121,13 +122,17 @@ def get_uncategorized_recurring(df: pd.DataFrame, min_occurrences: int = 2) -> l
     return counts[counts >= min_occurrences].index.tolist()
 
 
-def get_uncategorized_oneoffs(df: pd.DataFrame, max_occurrences: int = 1) -> list[str]:
+def get_uncategorized_oneoffs(df: pd.DataFrame, max_occurrences: int = 1, **kwargs) -> list[str]:
     """
     Identifies one-off transaction descriptions that are categorized as 'other'.
+    Uses **kwargs to absorb unexpected legacy arguments (like min_occurrences) from app.py.
     """
+    # If app.py strictly passed min_occurrences instead of max_occurrences, catch it:
+    limit = kwargs.get('min_occurrences', max_occurrences)
+    
     if df.empty or 'category' not in df.columns or 'description' not in df.columns:
         return []
 
     uncategorized = df[df['category'] == 'other']
     counts = uncategorized['description'].value_counts()
-    return counts[counts <= max_occurrences].index.tolist()
+    return counts[counts <= limit].index.tolist()
